@@ -1,7 +1,13 @@
 {
-  "name": "xwoo/data-type-admin",
+  "name": "x-wp/wc-data-type-admin",
   "license": "GPL-2.0",
   "type": "library",
+  "non-feature-branches": [
+    "master",
+    "develop",
+    "feat-*",
+    "renovate/*"
+  ],
   "authors": [
     {
       "name": "Sibin Grasic",
@@ -9,26 +15,35 @@
     }
   ],
   "require": {
-    "php": ">= 8.1",
-    "xwoo/data-type": "*",
-    "oblak/wp-polyfills": "^1.1"
+    "php": ">=8.0",
+    "x-wp/wc-data-type": "^1.0"
   },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
   "require-dev": {
-    "oblak/wordpress-coding-standard": "^1.0"
+    "oblak/wordpress-coding-standard": "^1",
+    "php-stubs/woocommerce-stubs": "^9.0",
+    "php-stubs/wordpress-stubs": "^6.5",
+    "phpstan/extension-installer": "^1.3",
+    "phpstan/phpstan": "^1.10",
+    "phpstan/phpstan-deprecation-rules": "^1.1",
+    "swissspidy/phpstan-no-private": "^0.2.0",
+    "szepeviktor/phpstan-wordpress": "^1.3"
   },
   "suggest": {
     "automattic/jetpack-autoloader": "Allow for better interoperability with other plugins that use this package."
   },
   "autoload": {
     "psr-4": {
-      "XWC\\": "src"
-    }
+      "XWC\\Data\\": "src/"
+    },
+    "classmap": [
+      "src/Admin"
+    ]
   },
   "config": {
     "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
-    }
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true
+    },
+    "platform-check": false
   }
 }
