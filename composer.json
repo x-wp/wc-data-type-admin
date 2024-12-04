@@ -26,15 +26,21 @@
     "phpstan/phpstan": "^1.10",
     "phpstan/phpstan-deprecation-rules": "^1.1",
     "swissspidy/phpstan-no-private": "^0.2.0",
-    "szepeviktor/phpstan-wordpress": "^1.3"
+    "szepeviktor/phpstan-wordpress": "^1.3",
+    "x-wp/di": "^1.0@beta"
   },
   "suggest": {
     "automattic/jetpack-autoloader": "Allow for better interoperability with other plugins that use this package."
   },
+  "minimum-stability": "beta",
+  "prefer-stable": true,
   "autoload": {
     "psr-4": {
       "XWC\\Data\\": "src/"
     },
+    "files": [
+      "src/Functions/xwc-list-table-fns.php"
+    ],
     "classmap": [
       "src/Admin"
     ]
