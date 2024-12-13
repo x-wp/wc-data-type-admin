@@ -15,22 +15,49 @@ trait Item_Handler {
     protected $data_store;
 
     /**
+     * Get order and orderby args
+     *
+     * @return array{0: string, 1: 'ASC'|'DESC'}
+     */
+    protected function get_ordering_args(): array {
+        $req_oby = \xwp_fetch_get_var( 'orderby', '' );
+        $req_ord = \xwp_fetch_get_var( 'order', '' );
+
+        if ( $req_oby && $req_ord ) {
+            return array( $req_oby, $req_ord );
+        }
+
+        [ 2 => $sortable ] = $this->get_column_info();
+
+        foreach ( $sortable as $col ) {
+            $orderby = $col[0] ?? null;
+            $text    = $col[3] ?? '';
+            $init    = $col[4] ?? null;
+        }
+
+        if ( ! \is_string( $text ) || '' === $text ) {
+            return array( 'id', 'desc' );
+        }
+
+        return array( $orderby ?? 'id', \strtoupper( $init ?? 'desc' ) );
+    }
+
+    /**
      * Prepare items to display
      *
      * @param  int $per_page Number of synchronizations to retrieve.
      * @param  int $page_num Page number.
      */
     public function prepare_items( $per_page = 20, $page_num = null ) {
-        $this->_column_headers = $this->get_column_info();
+        $this->get_column_info();
+        [ $orderby, $order ] = $this->get_ordering_args();
 
-        // phpcs:disable WordPress.Security
-        $sanitize = static fn( $v, $d ) => \sanitize_text_field( \wp_unslash( $_GET[ $v ] ?? $d ) );
         $defaults = array(
-            'order'    => $sanitize( 'order', 'DESC' ),
-            'orderby'  => $sanitize( 'orderby', 'id' ),
+            'limit'    => $this->get_items_per_page( "edit_{$this->_args['plural']}_per_page", $per_page ),
+            'order'    => $order,
+            'orderby'  => $orderby,
             'page'     => $page_num ?? $this->get_pagenum(),
             'paginate' => true,
-            'per_page' => $this->get_items_per_page( "edit_{$this->_args['plural']}_per_page", $per_page ),
             'return'   => 'ids',
         );
         // phpcs:enable WordPress.Security
@@ -40,7 +67,7 @@ trait Item_Handler {
 
         $this->set_pagination_args(
             array(
-                'per_page'    => $args['per_page'],
+                'per_page'    => $args['limit'],
                 'total_items' => $res['total'],
                 'total_pages' => $res['pages'],
             ),
@@ -67,11 +94,11 @@ trait Item_Handler {
 
         foreach ( $items as $item ) {
             //phpcs:ignore PHPCompatibility.Variables
-            global ${$this->data_type};
+            global ${$this->entity};
 
-            ${$this->data_type} = \xwc_get_object( $item, $this->data_type );
+            ${$this->entity} = \xwc_get_object( $item, $this->entity );
 
-            $this->single_row( ${$this->data_type} );
+            $this->single_row( ${$this->entity} );
         }
     }
 
@@ -106,7 +133,52 @@ trait Item_Handler {
             default           => "get_{$col}",
         };
 
-        return $obj->$method();
+        // phpcs:ignore Universal.Operators.DisallowShortTernary.Found
+        return $obj->$method() ?: '<span class="na">&ndash;</span>';
+    }
+
+    /**
+     * Callback for the actions column
+     *
+     * @param  XWC_Data $obj Object being displayed.
+     */
+    protected function column_actions( XWC_Data $obj ): void {
+        $filter = "xwc_admin_{$this->entity}_actions";
+
+        echo '<div>';
+
+        /**
+         * Fires before the actions are displayed.
+         *
+         * @param XWC_Data $obj XWC_Data object.
+         *
+         * @since 1.0.0
+         */
+        \do_action( "{$filter}_start", $obj );
+
+        /**
+         * Filters the actions for the current item.
+         *
+         * @param  array<string,mixed> $actions Actions.
+         * @param  XWC_Data            $obj     XWC_Data object.
+         * @return array<string,mixed>          Actions.
+         *
+         * @since 1.0.0
+         */
+        $actions = \apply_filters( $filter, array(), $obj );
+
+        echo \xwc_render_action_buttons( $actions );
+
+        /**
+         * Fires after the actions are displayed.
+         *
+         * @param XWC_Data $obj XWC_Data object.
+         *
+         * @since 1.0.0
+         */
+        \do_action( "{$filter}_end", $obj );
+
+        echo '<div>';
     }
 
     /**

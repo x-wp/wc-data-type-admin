@@ -9,18 +9,28 @@ namespace XWC\Data\Traits;
 
 use XWC_Data;
 
+/**
+ * Row action methods for XWC_Data_List_Table.
+ *
+ * @template TObj of XWC_Data
+ */
 trait Row_Action_Handler {
     /**
      * Row actions
      *
-     * @var array<string, array{title: string, url: callable(\XWC_Data=): string|false, when: callable(\XWC_Data=): bool}|string>
+     * @var array<string, array{title: string, url: callable(TObj): string|false, when: callable(TObj): bool}|string>
      */
     protected array $row_actions = array();
 
     /**
      * Get current row actions
      *
-     * @return array<string, array{title: string, url: callable(XWC_Data): string|false, when: callable(Data): bool}|string>
+     * @return array<string,string|array{
+     *   title: string,
+     *   url: callable(TObj): string|false,
+     *   when: callable(TObj): bool
+     *   class?: array<string>|string|callable(TObj): string|array<string>
+     * }>
      */
     abstract protected function get_row_actions();
 
@@ -29,6 +39,7 @@ trait Row_Action_Handler {
      */
     private function prep_row_actions() {
         $default = array(
+            'class' => static fn() => '',
             'title' => '',
             'url'   => static fn() => false,
             'when'  => static fn() => true,
@@ -57,9 +68,22 @@ trait Row_Action_Handler {
 
         $url = $data['url']( $obj );
 
-        return $url
-            ? \sprintf( '<a href="%s">%s</a>', $url, $data['title'] )
-            : $data['title'];
+        if ( ! $url ) {
+            return $data['title'];
+        }
+
+        $tgt = \str_starts_with( $url, \home_url( 'wp-admin' ) ) ? '_self' : '_blank';
+        $cls = \is_callable( $data['class'] ) ? $data['class']( $obj ) : $data['class'];
+
+        return \sprintf(
+            <<<'HTML'
+                <a href="%1$s" target="%2$s" class="%3$s">%4$s</a>
+            HTML,
+            \esc_url( $url ),
+            \esc_attr( $tgt ),
+            \implode( ' ', \array_map( 'sanitize_html_class', \wc_string_to_array( $cls ) ) ),
+            \esc_html( $data['title'] ),
+        );
     }
 
     /**

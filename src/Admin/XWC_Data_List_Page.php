@@ -98,6 +98,13 @@ abstract class XWC_Data_List_Page {
     public bool $inline_edit;
 
     /**
+     * XWP DI Container ID.
+     *
+     * @var string|null
+     */
+    protected ?string $container;
+
+    /**
      * Class constructor
      */
     public function __construct() {
@@ -134,6 +141,7 @@ abstract class XWC_Data_List_Page {
             'menu_title' => $args['title'] ?? null,
             'capability' => 'manage_woocommerce',
             'entity'     => null,
+            'container'  => '',
         );
 
         return wp_parse_args( $args, $defs );
@@ -206,6 +214,17 @@ abstract class XWC_Data_List_Page {
         $this->table_class = $args['cname'];
         $this->table_args  = $args['args'];
         $this->inline_edit = $this->table_args['args']['ajax'];
+    }
+
+    /**
+     * Loads the list table object
+     *
+     * @return T
+     */
+    protected function load_table(): XWC_Data_List_Table {
+        return $this->container
+            ? \xwp_app( $this->container )->make( $this->table_class, $this->table_args )
+            : new ( $this->table_class )( ...$this->table_args );
     }
 
     /**
@@ -282,7 +301,7 @@ abstract class XWC_Data_List_Page {
 		! \class_exists( 'WP_List_Table' ) &&
         require ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 
-        $this->table = new $this->table_class( ...$this->table_args );
+        $this->table = $this->load_table();
 
         if ( ! $this->inline_edit ) {
             return;
