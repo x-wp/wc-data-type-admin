@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:disable WordPress.Security.NonceVerification.Recommended
 /**
  * URI_Clearner trait file.
  *
@@ -6,12 +6,59 @@
  * @subpackage Traits
  */
 
-namespace XWC\Traits;
+namespace XWC\Data\Traits;
 
 /**
  * Cleans the unneeded parameters from the request URI.
  */
-trait URI_Cleaner {
+trait URI_Handler {
+    /**
+     * Get the base URL for the list table
+     *
+     * @return string Base URL
+     */
+    abstract protected function get_base_url();
+
+    /**
+	 * Gets the current action selected from the bulk actions dropdown.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @return string|false The action name. False if no action was selected.
+	 */
+	public function current_action() {
+        $request = \wc_clean( \wp_unslash( $_REQUEST ) );
+        $filter  = $request['filter_action'] ?? '';
+        $action  = $request['action'] ?? '-1';
+
+        if ( '' !== $filter ) {
+            return false;
+        }
+
+        if ( '-1' !== $action ) {
+            return $action;
+        }
+
+        return false;
+	}
+
+    /**
+     * Clears the referer and nonce from the URL
+     */
+    protected function maybe_clear_referer() {
+        $referer_nonce = ! $this->current_action() && isset( $_REQUEST['_wp_http_referer'] );
+        $clean         = array( 'referer_nonce' => $referer_nonce );
+
+        $params = $this->clean_uri_params( $clean );
+
+        if ( ! $params ) {
+            return;
+        }
+
+        \wp_safe_redirect( \add_query_arg( $params, $this->get_base_url() ) );
+        exit;
+    }
+
     /**
      * Get the cleaners to use.
      *
@@ -42,7 +89,7 @@ trait URI_Cleaner {
      */
     public function clean_uri_params( array $what = array() ): array|false {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$req  = \wc_clean( \wp_unslash( $_REQUEST ?? array() ) );
+		$req  = \wc_clean( \wp_unslash( $_REQUEST ) );
         $hash = \md5( \wp_json_encode( $req ) );
 
         foreach ( $this->get_cleaners( $what ) as $cleaner ) {

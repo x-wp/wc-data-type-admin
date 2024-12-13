@@ -6,7 +6,7 @@
  * @subpackage Traits
  */
 
-namespace XWC\Traits;
+namespace XWC\Data\Traits;
 
 /**
  * Trait for handling bulk actions.
