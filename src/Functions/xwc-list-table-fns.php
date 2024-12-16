@@ -52,7 +52,7 @@ function xwc_render_action_buttons( array $actions ): string {
                 sanitize_html_class( $action['action'] ),
                 esc_url( $action['url'] ),
                 esc_attr( $action['title'] ?? $action['name'] ),
-                wp_kses_post( $action['icon'] ?? $action['name'], 'post' ),
+                wp_kses_post( $action['icon'] ?? $action['name'] ),
             );
     }
 

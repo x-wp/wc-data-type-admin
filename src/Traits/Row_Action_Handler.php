@@ -28,7 +28,7 @@ trait Row_Action_Handler {
      * @return array<string,string|array{
      *   title: string,
      *   url: callable(TObj): string|false,
-     *   when: callable(TObj): bool
+     *   when: callable(TObj): bool,
      *   class?: array<string>|string|callable(TObj): string|array<string>
      * }>
      */

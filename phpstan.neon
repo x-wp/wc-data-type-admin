@@ -2,5 +2,7 @@ parameters:
   level: 5
   paths:
     - src
+  scanFiles:
+    - vendor/x-wp/wc-data-type/stubs/wc-override.php
   bootstrapFiles:
     - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php

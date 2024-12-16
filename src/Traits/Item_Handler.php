@@ -35,8 +35,8 @@ trait Item_Handler {
             $init    = $col[4] ?? null;
         }
 
-        if ( ! \is_string( $text ) || '' === $text ) {
-            return array( 'id', 'desc' );
+        if ( '' === ( $text ?? '' ) ) {
+            return array( 'id', 'DESC' );
         }
 
         return array( $orderby ?? 'id', \strtoupper( $init ?? 'desc' ) );

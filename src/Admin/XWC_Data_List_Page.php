@@ -8,7 +8,7 @@
 /**
  * Base data store list page class.
  *
- * @template T of \XWC_Data_List_Table
+ * @template T of XWC_Data_List_Table
  */
 abstract class XWC_Data_List_Page {
     /**
@@ -335,5 +335,23 @@ abstract class XWC_Data_List_Page {
      */
     public function output() {
         require dirname( __DIR__ ) . '/Views/html-admin-page-edsl.php';
+    }
+
+    /**
+     * Returns the list table object
+     *
+     * @return XWC_Data_List_Table
+     */
+    public function get_table(): XWC_Data_List_Table {
+        return $this->table;
+    }
+
+    /**
+     * Returns the entity
+     *
+     * @return string
+     */
+    public function get_entity(): string {
+        return $this->entity;
     }
 }

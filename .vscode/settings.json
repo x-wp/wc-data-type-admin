@@ -1,0 +1,4 @@
+{
+    "phpstan.checkValidity": true,
+    "phpstan.enabled": true
+}

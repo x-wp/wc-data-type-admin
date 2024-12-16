@@ -12,7 +12,7 @@ use XWC\Data\Traits;
  * XWC Data standard list table class.
  *
  * @template TObj of XWC_Data
- * @template T of XWC_Data_Store_XT
+ * @template TDs of XWC_Data_Store_XT<TObj,XWC_Meta_Store<TObj>>
  */
 abstract class XWC_Data_List_Table extends \WP_List_Table {
     use Traits\Bulk_Action_Handler;
@@ -29,8 +29,7 @@ abstract class XWC_Data_List_Table extends \WP_List_Table {
     /**
      * The data store object.
      *
-     * @var XWC_Data_Store_XT
-     * @phpstan-var WC_Data_Store
+     * @var WC_Data_Store<TDs>
      */
     protected $data_store;
 
@@ -114,9 +113,10 @@ abstract class XWC_Data_List_Table extends \WP_List_Table {
     /**
      * Load the data store for the list table
      *
-     * @return WC_Data_Store
+     * @return WC_Data_Store<TDs>
      */
     protected function load_data_store(): WC_Data_Store {
+        // @phpstan-ignore return.type
         return xwc_data_store( $this->entity );
     }
 
@@ -233,12 +233,14 @@ abstract class XWC_Data_List_Table extends \WP_List_Table {
             return null;
         }
 
+        $qa = 'all' !== $status ? array( $this->view_prop => $status ) : array();
+
         return \sprintf(
             '<a href="%s" class="%s">
                 %s
                 <span class="count">(%s)</span>
             </a>',
-            \add_query_arg( array( $this->view_prop => $status ), $this->get_base_url() ),
+            \add_query_arg( $qa, $this->get_base_url() ),
             $status === $selected ? 'current' : '',
             $title,
             $count,
@@ -249,6 +251,11 @@ abstract class XWC_Data_List_Table extends \WP_List_Table {
      * Extra inputs used when displaying the table on subpage of another page
      */
     public function extra_inputs() {
+        /**
+         * Variable override
+         *
+         * @var array<string,mixed> $get
+         */
         $get          = xwp_get_arr();
         $input_string = '<input type="hidden" name="%s" value="%s">';
 
@@ -275,5 +282,12 @@ abstract class XWC_Data_List_Table extends \WP_List_Table {
             \esc_attr( $get['active'] ?? 'all' ),
         );
         //phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
+    }
+
+    /**
+	 * Outputs the hidden row displayed when inline editing
+     */
+    public function inline_edit(): void {
+        // Noop.
     }
 }
