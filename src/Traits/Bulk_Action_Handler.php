@@ -43,7 +43,7 @@ trait Bulk_Action_Handler {
      */
     public function process_bulk_actions() {
         $action  = $this->current_action();
-        $log_ids = \wp_parse_id_list( \wp_unslash( $_REQUEST[ "{$this->_args['singular']}_id" ] ?? array() ) );
+        $log_ids = \wp_parse_id_list( \xwp_fetch_req_var( "{$this->_args['singular']}_id", array() ) );
         $type    = 'success';
         $total   = 0;
 

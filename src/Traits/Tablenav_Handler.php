@@ -6,7 +6,14 @@ trait Tablenav_Handler {
     /**
      * Get the extra table navigation filters
      *
-     * @return array
+     * @return array<string,array{
+     *   all: string,
+     *   options: array<string,string>,
+     *   type?: string,
+     *   callback?: callable(string): string,
+     *   class?: string,
+     *   type?: string,
+     * }>
      */
     abstract protected function get_extra_tablenav_filters();
 
@@ -25,8 +32,8 @@ trait Tablenav_Handler {
         echo '<input type="hidden" name="s" value="">';
         echo '<div class="alignleft actions">';
 
-        foreach ( $tablenav_filters as $filter_data ) {
-            $this->display_tablenav_filter( $filter_data );
+        foreach ( $tablenav_filters as $key => $data ) {
+            $this->display_tablenav_filter( $data, $key );
         }
 
         echo '<input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filter">';
@@ -36,10 +43,12 @@ trait Tablenav_Handler {
     /**
      * Displays individual tablenav filter
      *
-     * @param array $args Filter data.
+     * @param array<string,mixed> $args Filter data.
+     * @param string              $key  Filter key.
      */
-    final protected function display_tablenav_filter( array $args ) {
-        $args['selected'] = \wc_clean( \wp_unslash( $_REQUEST[ $args['type'] ] ?? '0' ) );
+    final protected function display_tablenav_filter( array $args, string $key ) {
+        $args['type']   ??= $key;
+        $args['selected'] = \xwp_fetch_req_var( $args['type'], '0' );
         $args['callback'] = $this->get_filter_option_cb( $args['callback'] ?? false );
         $args['class']    = \implode( ' ', \wc_string_to_array( $args['class'] ?? '' ) );
 

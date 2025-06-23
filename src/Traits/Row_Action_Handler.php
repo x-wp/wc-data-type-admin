@@ -89,10 +89,10 @@ trait Row_Action_Handler {
     /**
      * Handles the row actions
      *
-     * @param  XWC_Data $obj     Object being acted upon.
-     * @param  string   $column  Current column name.
-     * @param  string   $primary Primary column name.
-     * @return string            Row actions HTML, if the column is the primary column.
+     * @param  TObj   $obj     Object being acted upon.
+     * @param  string $column  Current column name.
+     * @param  string $primary Primary column name.
+     * @return string
      */
     protected function handle_row_actions( $obj, $column, $primary ) {
         if ( $primary !== $column ) {

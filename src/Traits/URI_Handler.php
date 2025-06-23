@@ -27,16 +27,21 @@ trait URI_Handler {
 	 * @return string|false The action name. False if no action was selected.
 	 */
 	public function current_action() {
-        $request = \wc_clean( \wp_unslash( $_REQUEST ) );
-        $filter  = $request['filter_action'] ?? '';
-        $action  = $request['action'] ?? '-1';
+        /**
+         * Variable override
+         *
+         * @var array{action: string, filter_action: string} $request
+         */
+        //phpcs:disable WordPress.Arrays
+        $request = \xwp_req_arr( array( 'action' => '-1', 'filter_action' => '' ) );
+        //phpcs:enable WordPress.Arrays
 
-        if ( '' !== $filter ) {
+        if ( '' !== $request['filter_action'] ) {
             return false;
         }
 
-        if ( '-1' !== $action ) {
-            return $action;
+        if ( '-1' !== $request['action'] ) {
+            return $request['action'];
         }
 
         return false;
@@ -88,8 +93,7 @@ trait URI_Handler {
      * @return array|false
      */
     public function clean_uri_params( array $what = array() ): array|false {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$req  = \wc_clean( \wp_unslash( $_REQUEST ) );
+		$req  = \xwp_req_arr();
         $hash = \md5( \wp_json_encode( $req ) );
 
         foreach ( $this->get_cleaners( $what ) as $cleaner ) {

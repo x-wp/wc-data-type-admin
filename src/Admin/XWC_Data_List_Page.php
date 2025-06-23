@@ -5,6 +5,8 @@
  * @package eXtended WooCommerce
  */
 
+use DI\Container;
+
 /**
  * Base data store list page class.
  *
@@ -105,6 +107,13 @@ abstract class XWC_Data_List_Page {
     protected ?string $container;
 
     /**
+     * Connect to the WC Admin Pages.
+     *
+     * @var bool
+     */
+    protected bool $connect;
+
+    /**
      * Class constructor
      */
     public function __construct() {
@@ -123,7 +132,19 @@ abstract class XWC_Data_List_Page {
     /**
      * Returns the table arguments
      *
-     * @return array
+     * @return array{
+     *   entity: string,
+     *   class: class-string<T>,
+     *   view_prop: string|null,
+     *   args: array{
+     *     force_cols?: bool,
+     *     singular?: string,
+     *     plural?: string,
+     *     ajax?: bool,
+     *     screen?: string,
+     *   },
+     *   query_args?: array<string,mixed>
+     * }
      */
     abstract protected function get_table_args(): array;
 
@@ -142,6 +163,7 @@ abstract class XWC_Data_List_Page {
             'capability' => 'manage_woocommerce',
             'entity'     => null,
             'container'  => '',
+            'connect'    => true,
         );
 
         return wp_parse_args( $args, $defs );
@@ -187,12 +209,15 @@ abstract class XWC_Data_List_Page {
             throw new \InvalidArgumentException( 'Invalid table class' );
         }
 
+        $args['table_args'] = $args['args'] ?? $args['table_args'] ?? array();
+        unset( $args['args'] );
+
         $args = wp_parse_args(
             xwp_array_diff_assoc( $args, 'class' ),
             array(
-				'data_type' => $this->entity,
-				'view_prop' => null,
-				'args'      => array(
+				'entity'     => $this->entity,
+				'view_prop'  => null,
+				'table_args' => array(
 					'ajax'     => false,
 					'plural'   => \str_replace( '-', '_', $this->entity ) . 's',
 					'singular' => \str_replace( '-', '_', $this->entity ),
@@ -201,6 +226,17 @@ abstract class XWC_Data_List_Page {
         );
 
         return compact( 'cname', 'args' );
+    }
+
+    /**
+     * Returns the DI container
+     *
+     * @return ?Container
+     */
+    protected function get_container(): ?Container {
+        return $this->container
+            ? xwp_app( $this->container )
+            : null;
     }
 
     /**
@@ -213,7 +249,7 @@ abstract class XWC_Data_List_Page {
 
         $this->table_class = $args['cname'];
         $this->table_args  = $args['args'];
-        $this->inline_edit = $this->table_args['args']['ajax'];
+        $this->inline_edit = $this->table_args['table_args']['ajax'];
     }
 
     /**
@@ -222,9 +258,9 @@ abstract class XWC_Data_List_Page {
      * @return T
      */
     protected function load_table(): XWC_Data_List_Table {
-        return $this->container
-            ? \xwp_app( $this->container )->make( $this->table_class, $this->table_args )
-            : new ( $this->table_class )( ...$this->table_args );
+        return $this->get_container()?->make( $this->table_class, $this->table_args )
+            ??
+            new ( $this->table_class )( ...$this->table_args );
     }
 
     /**
@@ -261,8 +297,7 @@ abstract class XWC_Data_List_Page {
 	public function add_page_class( $classes ) {
 		global $pagenow;
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$page = \wc_clean( \wp_unslash( $_GET['page'] ?? '' ) );
+		$page = xwp_fetch_get_var( 'page', '' );
 
 		if ( ! \str_contains( $this->base, $pagenow ) || $page !== $this->id ) {
             return $classes;
@@ -283,6 +318,17 @@ abstract class XWC_Data_List_Page {
             "{$this->namespace}-{$this->id}",
             array( $this, 'output' ),
         );
+
+        if ( $this->connect ) {
+            wc_admin_connect_page(
+                array(
+                    'id'        => "{$this->namespace}-{$this->id}",
+                    'parent'    => $this->base,
+                    'screen_id' => $this->hook,
+                    'title'     => $this->title,
+                ),
+            );
+        }
 
         \add_action( "load-{$this->hook}", array( $this, 'set_screen_options' ) );
     }

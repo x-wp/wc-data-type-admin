@@ -16,7 +16,9 @@ $entity = $this->get_entity();
 ?>
 
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+    <?php if ( ! $this->connect ) : ?>
+        <h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+    <?php endif; ?>
 
     <?php
     /**

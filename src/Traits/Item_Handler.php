@@ -1,18 +1,31 @@
-<?php // phpcs:disable WordPress.Security.NonceVerification.Recommended
+<?php // phpcs:disable WordPress.Security.NonceVerification.Recommended, Universal.Operators.DisallowShortTernary.Found
 
 namespace XWC\Data\Traits;
 
 use XWC_Data;
 use XWC_Data_Store_XT;
+use XWC_Meta_Store;
 
+/**
+ * Item handler trait.
+ *
+ * @template TObj of XWC_Data
+ * @template TDs of XWC_Data_Store_XT
+ */
 trait Item_Handler {
     /**
      * The data store object.
      *
-     * @var XWC_Data_Store_XT
-     * @phpstan-var WC_Data_Store
+     * @var TDs
      */
     protected $data_store;
+
+    /**
+     * Object being handled
+     *
+     * @var TObj
+     */
+    protected XWC_Data $object;
 
     /**
      * Get order and orderby args
@@ -22,6 +35,7 @@ trait Item_Handler {
     protected function get_ordering_args(): array {
         $req_oby = \xwp_fetch_get_var( 'orderby', '' );
         $req_ord = \xwp_fetch_get_var( 'order', '' );
+        $def_fld = $this->data_store->get_id_field();
 
         if ( $req_oby && $req_ord ) {
             return array( $req_oby, $req_ord );
@@ -36,10 +50,10 @@ trait Item_Handler {
         }
 
         if ( '' === ( $text ?? '' ) ) {
-            return array( 'id', 'DESC' );
+            return array( $def_fld, 'DESC' );
         }
 
-        return array( $orderby ?? 'id', \strtoupper( $init ?? 'desc' ) );
+        return array( $orderby ?? $def_fld, \strtoupper( $init ?? 'desc' ?: 'desc' ) );
     }
 
     /**
@@ -93,19 +107,16 @@ trait Item_Handler {
         $this->prep_row_actions();
 
         foreach ( $items as $item ) {
-            //phpcs:ignore PHPCompatibility.Variables
-            global ${$this->entity};
+            $this->object = \xwc_get_object( $item, $this->entity );
 
-            ${$this->entity} = \xwc_get_object( $item, $this->entity );
-
-            $this->single_row( ${$this->entity} );
+            $this->single_row( $this->object );
         }
     }
 
     /**
      * Checkbox column
      *
-     * @param  XWC_Data $obj XWC_Data object.
+     * @param  TObj $obj XWC_Data object.
      * @return string    Checkbox HTML
      */
     protected function column_cb( $obj ) {
@@ -119,8 +130,8 @@ trait Item_Handler {
     /**
      * Default column callback
      *
-     * @param  XWC_Data $obj  XWC_Data object.
-     * @param  string   $col  Column name.
+     * @param  TObj   $obj  XWC_Data object.
+     * @param  string $col  Column name.
      * @return string       Column HTML.
      */
     protected function column_default( $obj, $col ) {
@@ -140,9 +151,9 @@ trait Item_Handler {
     /**
      * Callback for the actions column
      *
-     * @param  XWC_Data $obj Object being displayed.
+     * @param TObj $obj Object being displayed.
      */
-    protected function column_actions( XWC_Data $obj ): void {
+    protected function column_actions( $obj ): void {
         $filter = "xwc_admin_{$this->entity}_actions";
 
         echo '<div>';

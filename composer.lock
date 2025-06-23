@@ -456,16 +456,16 @@
         },
         {
             "name": "x-wp/helper-classes",
-            "version": "v1.18.1",
+            "version": "v1.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/x-wp/helper-classes.git",
-                "reference": "451dff53964c2fbdf086882c868709e4e36fb1cd"
+                "reference": "9d0e4611a41846e5407c61548d0de2f7da9c7478"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/x-wp/helper-classes/zipball/451dff53964c2fbdf086882c868709e4e36fb1cd",
-                "reference": "451dff53964c2fbdf086882c868709e4e36fb1cd",
+                "url": "https://api.github.com/repos/x-wp/helper-classes/zipball/9d0e4611a41846e5407c61548d0de2f7da9c7478",
+                "reference": "9d0e4611a41846e5407c61548d0de2f7da9c7478",
                 "shasum": ""
             },
             "require": {
@@ -506,22 +506,28 @@
             ],
             "support": {
                 "issues": "https://github.com/x-wp/helper-classes/issues",
-                "source": "https://github.com/x-wp/helper-classes/tree/v1.18.1"
+                "source": "https://github.com/x-wp/helper-classes/tree/v1.21.0"
             },
-            "time": "2024-09-23T14:31:15+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/seebeen",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-02-11T18:24:14+00:00"
         },
         {
             "name": "x-wp/helper-functions",
-            "version": "v1.18.1",
+            "version": "v1.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/x-wp/helper-functions.git",
-                "reference": "edd258d0b2ad90a78893ffcabf6626cebf56a281"
+                "reference": "b6696bc39b68e3df1b9da77c7d4226347861045c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/x-wp/helper-functions/zipball/edd258d0b2ad90a78893ffcabf6626cebf56a281",
-                "reference": "edd258d0b2ad90a78893ffcabf6626cebf56a281",
+                "url": "https://api.github.com/repos/x-wp/helper-functions/zipball/b6696bc39b68e3df1b9da77c7d4226347861045c",
+                "reference": "b6696bc39b68e3df1b9da77c7d4226347861045c",
                 "shasum": ""
             },
             "require": {
@@ -534,6 +540,7 @@
             "autoload": {
                 "files": [
                     "xwp-helper-fns-arr.php",
+                    "xwp-helper-fns-meta.php",
                     "xwp-helper-fns-num.php",
                     "xwp-helper-fns-req.php",
                     "xwp-helper-fns.php"
@@ -564,22 +571,28 @@
             ],
             "support": {
                 "issues": "https://github.com/x-wp/helper-functions/issues",
-                "source": "https://github.com/x-wp/helper-functions/tree/v1.18.1"
+                "source": "https://github.com/x-wp/helper-functions/tree/v1.21.0"
             },
-            "time": "2024-11-04T00:58:34+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/seebeen",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-06-08T13:14:33+00:00"
         },
         {
             "name": "x-wp/helper-traits",
-            "version": "v1.18.1",
+            "version": "v1.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/x-wp/helper-traits.git",
-                "reference": "0367d136d6ba36e2ae0fe1854584ef760ea7cae9"
+                "reference": "c341b8ad27de9b1a73e2d53dc8702897a0cfba18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/x-wp/helper-traits/zipball/0367d136d6ba36e2ae0fe1854584ef760ea7cae9",
-                "reference": "0367d136d6ba36e2ae0fe1854584ef760ea7cae9",
+                "url": "https://api.github.com/repos/x-wp/helper-traits/zipball/c341b8ad27de9b1a73e2d53dc8702897a0cfba18",
+                "reference": "c341b8ad27de9b1a73e2d53dc8702897a0cfba18",
                 "shasum": ""
             },
             "require": {
@@ -616,40 +629,46 @@
             ],
             "support": {
                 "issues": "https://github.com/x-wp/helper-traits/issues",
-                "source": "https://github.com/x-wp/helper-traits/tree/v1.18.1"
+                "source": "https://github.com/x-wp/helper-traits/tree/v1.21.0"
             },
-            "time": "2024-09-18T12:43:44+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/seebeen",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-06-08T10:17:19+00:00"
         },
         {
             "name": "x-wp/wc-data-type",
-            "version": "v1.3.1",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/x-wp/wc-data-type.git",
-                "reference": "cfde911c18452186e6b0cc9b6acca412d31c4489"
+                "reference": "b02cdae1aa0d49783d82897a1d94168b1c9427d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/x-wp/wc-data-type/zipball/cfde911c18452186e6b0cc9b6acca412d31c4489",
-                "reference": "cfde911c18452186e6b0cc9b6acca412d31c4489",
+                "url": "https://api.github.com/repos/x-wp/wc-data-type/zipball/b02cdae1aa0d49783d82897a1d94168b1c9427d8",
+                "reference": "b02cdae1aa0d49783d82897a1d94168b1c9427d8",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0",
                 "symfony/polyfill-php81": "^1.30",
-                "x-wp/di": "^1.0@beta",
+                "x-wp/di-implementation": "^1",
                 "x-wp/helper-classes": "^1",
                 "x-wp/helper-functions": "^1"
             },
             "require-dev": {
                 "oblak/wordpress-coding-standard": "^1",
-                "php-stubs/woocommerce-stubs": "^9.0",
                 "php-stubs/wordpress-stubs": "^6.5",
                 "phpstan/extension-installer": "^1.3",
                 "phpstan/phpstan": "^1.10",
                 "phpstan/phpstan-deprecation-rules": "^1.1",
                 "swissspidy/phpstan-no-private": "^0.2.0",
-                "szepeviktor/phpstan-wordpress": "^1.3"
+                "szepeviktor/phpstan-wordpress": "^1.3",
+                "x-wp/di": "^1.0 || ^2.0"
             },
             "suggest": {
                 "automattic/jetpack-autoloader": "Allow for better interoperability with other plugins that use this package."
@@ -657,11 +676,12 @@
             "type": "library",
             "autoload": {
                 "files": [
+                    "lib/bootstrap.php",
                     "src/Utils/xwc-data-utils-core.php",
                     "src/Utils/xwc-data-utils-object.php"
                 ],
                 "psr-4": {
-                    "XWC\\Data\\": "src"
+                    "XWC\\Data\\": "src/"
                 },
                 "classmap": [
                     "src/Core/"
@@ -681,9 +701,15 @@
             "homepage": "https://extended.woo.rs",
             "support": {
                 "issues": "https://github.com/x-wp/wc-data-type/issues",
-                "source": "https://github.com/x-wp/wc-data-type/tree/v1.3.1"
+                "source": "https://github.com/x-wp/wc-data-type/tree/v1.4.0"
             },
-            "time": "2024-12-16T13:06:15+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/seebeen",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-05-26T16:21:25+00:00"
         }
     ],
     "packages-dev": [

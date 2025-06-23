@@ -12,10 +12,15 @@ use XWC\Data\Traits;
  * XWC Data standard list table class.
  *
  * @template TObj of XWC_Data
- * @template TDs of XWC_Data_Store_XT<TObj,XWC_Meta_Store<TObj>>
+ * @template TDs of XWC_Data_Store_XT<TObj>
  */
 abstract class XWC_Data_List_Table extends \WP_List_Table {
     use Traits\Bulk_Action_Handler;
+    /**
+     * Item handler trait.
+     *
+     * @use Traits\Item_Handler<TObj,TDs>
+     */
     use Traits\Item_Handler;
     /**
      * Row action handler trait.
@@ -146,19 +151,19 @@ abstract class XWC_Data_List_Table extends \WP_List_Table {
      */
     protected function format_sortable_columns( array $sortable ): array {
         foreach ( $sortable as $id => $data ) {
-			if ( ! $data ) {
+            if ( ! $data ) {
                 continue;
             }
 
-			$data = (array) $data;
+            $data = (array) $data;
 
             $data[1] ??= false;
             $data[2] ??= '';
             $data[3] ??= false;
             $data[4] ??= false;
 
-			$sortable[ $id ] = $data;
-		}
+            $sortable[ $id ] = $data;
+        }
 
         return array_filter( $sortable );
     }
@@ -285,7 +290,7 @@ abstract class XWC_Data_List_Table extends \WP_List_Table {
     }
 
     /**
-	 * Outputs the hidden row displayed when inline editing
+     * Outputs the hidden row displayed when inline editing
      */
     public function inline_edit(): void {
         // Noop.
