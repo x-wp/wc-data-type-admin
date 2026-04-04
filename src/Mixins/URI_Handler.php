@@ -6,7 +6,7 @@
  * @subpackage Traits
  */
 
-namespace XWC\Data\Traits;
+namespace XWC\Data\Admin\Mixins;
 
 /**
  * Cleans the unneeded parameters from the request URI.
@@ -20,13 +20,13 @@ trait URI_Handler {
     abstract protected function get_base_url();
 
     /**
-	 * Gets the current action selected from the bulk actions dropdown.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @return string|false The action name. False if no action was selected.
-	 */
-	public function current_action() {
+     * Gets the current action selected from the bulk actions dropdown.
+     *
+     * @since 3.1.0
+     *
+     * @return string|false The action name. False if no action was selected.
+     */
+    public function current_action() {
         /**
          * Variable override
          *
@@ -45,45 +45,6 @@ trait URI_Handler {
         }
 
         return false;
-	}
-
-    /**
-     * Clears the referer and nonce from the URL
-     */
-    protected function maybe_clear_referer() {
-        $referer_nonce = ! $this->current_action() && isset( $_REQUEST['_wp_http_referer'] );
-        $clean         = array( 'referer_nonce' => $referer_nonce );
-
-        $params = $this->clean_uri_params( $clean );
-
-        if ( ! $params ) {
-            return;
-        }
-
-        \wp_safe_redirect( \add_query_arg( $params, $this->get_base_url() ) );
-        exit;
-    }
-
-    /**
-     * Get the cleaners to use.
-     *
-     * @param  array $cleaners The cleaners to use.
-     * @return array
-     */
-    protected function get_cleaners( array $cleaners ): array {
-        return \array_keys(
-            \array_filter(
-                \wp_parse_args(
-                    $cleaners,
-                    array(
-                        'empty_params'    => true,
-                        'non_actions'     => true,
-                        'referer_nonce'   => true,
-                        'shotgun_filters' => true,
-                    ),
-                ),
-            ),
-        );
     }
 
     /**
@@ -93,7 +54,7 @@ trait URI_Handler {
      * @return array|false
      */
     public function clean_uri_params( array $what = array() ): array|false {
-		$req  = \xwp_req_arr();
+        $req  = \xwp_req_arr();
         $hash = \md5( \wp_json_encode( $req ) );
 
         foreach ( $this->get_cleaners( $what ) as $cleaner ) {
@@ -173,5 +134,48 @@ trait URI_Handler {
 
             unset( $req[ $key ] );
         }
+    }
+
+    /**
+     * Clears the referer and nonce from the URL
+     */
+    protected function maybe_clear_referer() {
+        if ( 'inline-save' === \xwp_fetch_post_var( 'action', '' ) ) {
+            return;
+        }
+
+        $referer_nonce = ! $this->current_action() && isset( $_REQUEST['_wp_http_referer'] );
+        $clean         = array( 'referer_nonce' => $referer_nonce );
+
+        $params = $this->clean_uri_params( $clean );
+
+        if ( ! $params ) {
+            return;
+        }
+
+        \wp_safe_redirect( \add_query_arg( $params, $this->get_base_url() ) );
+        exit;
+    }
+
+    /**
+     * Get the cleaners to use.
+     *
+     * @param  array $cleaners The cleaners to use.
+     * @return array
+     */
+    protected function get_cleaners( array $cleaners ): array {
+        return \array_keys(
+            \array_filter(
+                \wp_parse_args(
+                    $cleaners,
+                    array(
+                        'empty_params'    => true,
+                        'non_actions'     => true,
+                        'referer_nonce'   => true,
+                        'shotgun_filters' => true,
+                    ),
+                ),
+            ),
+        );
     }
 }

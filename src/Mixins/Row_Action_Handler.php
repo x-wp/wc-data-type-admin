@@ -5,7 +5,7 @@
  * @package eXtended WooCommerce
  */
 
-namespace XWC\Data\Traits;
+namespace XWC\Data\Admin\Mixins;
 
 use XWC_Data;
 
@@ -35,26 +35,6 @@ trait Row_Action_Handler {
     abstract protected function get_row_actions();
 
     /**
-     * Prepares the row actions for display
-     */
-    private function prep_row_actions() {
-        $default = array(
-            'class' => static fn() => '',
-            'title' => '',
-            'url'   => static fn() => false,
-            'when'  => static fn() => true,
-        );
-
-        foreach ( $this->get_row_actions() as $action => $data ) {
-            if ( \is_string( $data ) ) {
-                $data = array( 'title' => $data );
-            }
-
-            $this->row_actions[ $action ] = \wp_parse_args( $data, $default );
-        }
-    }
-
-    /**
      * Formats the row action for display.
      *
      * @param  array    $data Row action data.
@@ -76,9 +56,7 @@ trait Row_Action_Handler {
         $cls = \is_callable( $data['class'] ) ? $data['class']( $obj ) : $data['class'];
 
         return \sprintf(
-            <<<'HTML'
-                <a href="%1$s" target="%2$s" class="%3$s">%4$s</a>
-            HTML,
+            '<a href="%1$s" target="%2$s" class="%3$s">%4$s</a>',
             \esc_url( $url ),
             \esc_attr( $tgt ),
             \implode( ' ', \array_map( 'sanitize_html_class', \wc_string_to_array( $cls ) ) ),
@@ -104,6 +82,30 @@ trait Row_Action_Handler {
             $actions[ $action ] = $this->format_row_action( $data, $obj );
         }
 
-        return $this->row_actions( \array_filter( $actions ) );
+        $inline = isset( $actions['inline hide-if-no-js'] )
+            ? $this->row_inline( $obj )
+            : '';
+
+        return $inline . $this->row_actions( \array_filter( $actions ) );
+    }
+
+    /**
+     * Prepares the row actions for display
+     */
+    private function prep_row_actions() {
+        $default = array(
+            'class' => static fn() => '',
+            'title' => '',
+            'url'   => static fn() => false,
+            'when'  => static fn() => true,
+        );
+
+        foreach ( $this->get_row_actions() as $action => $data ) {
+            if ( \is_string( $data ) ) {
+                $data = array( 'title' => $data );
+            }
+
+            $this->row_actions[ $action ] = \wp_parse_args( $data, $default );
+        }
     }
 }

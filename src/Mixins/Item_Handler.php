@@ -1,16 +1,15 @@
 <?php // phpcs:disable WordPress.Security.NonceVerification.Recommended, Universal.Operators.DisallowShortTernary.Found
 
-namespace XWC\Data\Traits;
+namespace XWC\Data\Admin\Mixins;
 
 use XWC_Data;
 use XWC_Data_Store_XT;
-use XWC_Meta_Store;
 
 /**
  * Item handler trait.
  *
  * @template TObj of XWC_Data
- * @template TDs of XWC_Data_Store_XT
+ * @template TDs of XWC_Data_Store_XT<TObj>
  */
 trait Item_Handler {
     /**
@@ -18,7 +17,7 @@ trait Item_Handler {
      *
      * @var TDs
      */
-    protected $data_store;
+    protected XWC_Data_Store_XT $data_store;
 
     /**
      * Object being handled
@@ -26,35 +25,6 @@ trait Item_Handler {
      * @var TObj
      */
     protected XWC_Data $object;
-
-    /**
-     * Get order and orderby args
-     *
-     * @return array{0: string, 1: 'ASC'|'DESC'}
-     */
-    protected function get_ordering_args(): array {
-        $req_oby = \xwp_fetch_get_var( 'orderby', '' );
-        $req_ord = \xwp_fetch_get_var( 'order', '' );
-        $def_fld = $this->data_store->get_id_field();
-
-        if ( $req_oby && $req_ord ) {
-            return array( $req_oby, $req_ord );
-        }
-
-        [ 2 => $sortable ] = $this->get_column_info();
-
-        foreach ( $sortable as $col ) {
-            $orderby = $col[0] ?? null;
-            $text    = $col[3] ?? '';
-            $init    = $col[4] ?? null;
-        }
-
-        if ( '' === ( $text ?? '' ) ) {
-            return array( $def_fld, 'DESC' );
-        }
-
-        return array( $orderby ?? $def_fld, \strtoupper( $init ?? 'desc' ?: 'desc' ) );
-    }
 
     /**
      * Prepare items to display
@@ -74,7 +44,7 @@ trait Item_Handler {
             'paginate' => true,
             'return'   => 'ids',
         );
-        // phpcs:enable WordPress.Security
+		// phpcs:enable WordPress.Security
 
         $args = \array_merge( $defaults, $this->query_args );
         $res  = $this->data_store->query( $args );
@@ -107,10 +77,58 @@ trait Item_Handler {
         $this->prep_row_actions();
 
         foreach ( $items as $item ) {
-            $this->object = \xwc_get_object( $item, $this->entity );
+            $this->object = \xwc_get_object( $item, $this->get_entity() );
 
             $this->single_row( $this->object );
         }
+    }
+
+    /**
+     * Generates content for a single row of the table.
+     *
+     * @since 3.1.0
+     *
+     * @param TObj $item The current item
+     */
+    public function single_row( $item ) {
+        \printf(
+            '<tr id="%s-%d" class="iedit">',
+            'post',
+            \esc_html( (string) $item->get_id() ),
+        );
+
+        $this->single_row_columns( $item );
+
+        echo '</tr>';
+    }
+
+    /**
+     * Get order and orderby args
+     *
+     * @return array{0: string, 1: 'ASC'|'DESC'}
+     */
+    protected function get_ordering_args(): array {
+        $req_oby = \xwp_fetch_get_var( 'orderby', '' );
+        $req_ord = \xwp_fetch_get_var( 'order', '' );
+        $def_fld = $this->data_store->get_id_field();
+
+        if ( $req_oby && $req_ord ) {
+            return array( $req_oby, $req_ord );
+        }
+
+        [ 2 => $sortable ] = $this->get_column_info();
+
+        foreach ( $sortable as $col ) {
+            $orderby = $col[0] ?? null;
+            $text    = $col[3] ?? '';
+            $init    = $col[4] ?? null;
+        }
+
+        if ( '' === ( $text ?? '' ) ) {
+            return array( $def_fld, 'DESC' );
+        }
+
+        return array( $orderby ?? $def_fld, \strtoupper( $init ?? 'desc' ?: 'desc' ) );
     }
 
     /**
@@ -154,7 +172,7 @@ trait Item_Handler {
      * @param TObj $obj Object being displayed.
      */
     protected function column_actions( $obj ): void {
-        $filter = "xwc_admin_{$this->entity}_actions";
+        $filter = "xwc_admin_{$this->get_entity()}_actions";
 
         echo '<div>';
 

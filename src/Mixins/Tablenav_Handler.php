@@ -1,6 +1,6 @@
 <?php // phpcs:disable WordPress.Security.NonceVerification.Recommended
 
-namespace XWC\Data\Traits;
+namespace XWC\Data\Admin\Mixins;
 
 trait Tablenav_Handler {
     /**
