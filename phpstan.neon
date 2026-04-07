@@ -4,3 +4,5 @@ parameters:
     - src
   bootstrapFiles:
     - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+  parallel:
+    maximumNumberOfProcesses: 1

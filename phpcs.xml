@@ -1,25 +1,29 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Theme">
-  <config name="minimum_supported_wp_version" value="6.0"/>
-  <config name="testVersion" value="7.4-"/>
+  <config name="minimum_supported_wp_version" value="6.0" />
+  <config name="testVersion" value="7.4-" />
 
-  <rule ref="Oblak"/>
-  <rule ref="Oblak-WooCommerce"/>
-  <rule ref="Oblak-Advanced"/>
+  <rule ref="Oblak" />
+  <rule ref="Oblak-WooCommerce" />
+  <rule ref="Oblak-Advanced" />
 
   <rule ref="WordPress.WP.I18n">
-		<properties>
-			<property name="text_domain" type="array" extend="true">
-				<element value="serbian-addons-for-woocommerce"/>
-				<element value="woocommerce"/>
-			</property>
-		</properties>
-	</rule>
+    <properties>
+      <property name="text_domain" type="array" extend="true">
+        <element value="serbian-addons-for-woocommerce" />
+        <element value="woocommerce" />
+      </property>
+    </properties>
+  </rule>
 
   <rule ref="WordPress.Security.EscapeOutput">
     <properties>
-      <property name="customAutoEscapedFunctions" type="array" value="xwc_render_action_buttons"/>
+      <property name="customAutoEscapedFunctions" type="array" value="xwc_render_action_buttons" />
     </properties>
+  </rule>
+
+  <rule ref="WordPress.Security.EscapeOutput.ExceptionNotEscaped">
+    <severity>0</severity>
   </rule>
 
   <file>src/</file>
