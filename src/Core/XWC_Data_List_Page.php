@@ -202,8 +202,6 @@ abstract class XWC_Data_List_Page {
             return;
         }
 
-        return;
-
         wc_admin_connect_page(
             wp_parse_args(
                 is_array( $this->connect ) ? $this->connect : array(),
@@ -273,7 +271,10 @@ abstract class XWC_Data_List_Page {
      * Outputs the page content
      */
     public function output() {
-        require dirname( __DIR__ ) . '/Views/html-admin-page-edsl.php';
+        $entity = $this->get_entity();
+        $table  = $this->get_table();
+
+        require dirname( __DIR__, 2 ) . '/templates/html-admin-page-edsl.php';
     }
 
     /**

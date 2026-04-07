@@ -30,10 +30,16 @@ trait URI_Handler {
         /**
          * Variable override
          *
-         * @var array{action: string, filter_action: string} $request
+         * @var array{action: string, action2: string, filter_action: string} $request
          */
         //phpcs:disable WordPress.Arrays
-        $request = \xwp_req_arr( array( 'action' => '-1', 'filter_action' => '' ) );
+        $request = \xwp_req_arr(
+            array(
+                'action'        => '-1',
+                'action2'       => '-1',
+                'filter_action' => '',
+            ),
+        );
         //phpcs:enable WordPress.Arrays
 
         if ( '' !== $request['filter_action'] ) {
@@ -42,6 +48,10 @@ trait URI_Handler {
 
         if ( '-1' !== $request['action'] ) {
             return $request['action'];
+        }
+
+        if ( '-1' !== $request['action2'] ) {
+            return $request['action2'];
         }
 
         return false;

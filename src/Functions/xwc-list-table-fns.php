@@ -34,7 +34,7 @@ function xwc_render_action_buttons( array $actions ): string {
             ? sprintf(
                 <<<'HTML'
                     <div class="xwc-action-button-group">
-                        <label>%s<label>
+                        <label>%s</label>
                         <span class="xwc-action-button-group-items">
                             %s
                         </span>

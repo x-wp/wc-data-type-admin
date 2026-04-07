@@ -118,17 +118,33 @@ trait Item_Handler {
 
         [ 2 => $sortable ] = $this->get_column_info();
 
+        $orderby  = $def_fld;
+        $fallback = null;
+
         foreach ( $sortable as $col ) {
-            $orderby = $col[0] ?? null;
+            $col     = (array) $col;
+            $field   = $col[0] ?? null;
             $text    = $col[3] ?? '';
-            $init    = $col[4] ?? null;
+            $initial = \strtoupper( (string) ( $col[4] ?? '' ) );
+
+            if ( ! $field ) {
+                continue;
+            }
+
+            $fallback ??= $field;
+
+            if ( \in_array( $initial, array( 'ASC', 'DESC' ), true ) ) {
+                return array( $field, $initial );
+            }
+
+            if ( '' === $text || $def_fld !== $orderby ) {
+                continue;
+            }
+
+            $orderby = $field;
         }
 
-        if ( '' === ( $text ?? '' ) ) {
-            return array( $def_fld, 'DESC' );
-        }
-
-        return array( $orderby ?? $def_fld, \strtoupper( $init ?? 'desc' ?: 'desc' ) );
+        return array( $orderby ?: ( $fallback ?? $def_fld ), 'DESC' );
     }
 
     /**
@@ -207,7 +223,7 @@ trait Item_Handler {
          */
         \do_action( "{$filter}_end", $obj );
 
-        echo '<div>';
+        echo '</div>';
     }
 
     /**

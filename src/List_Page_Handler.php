@@ -211,6 +211,10 @@ abstract class List_Page_Handler {
             \add_screen_option( $option, $args );
         }
 
+        if ( ! $this->should_enqueue_inline_edit() ) {
+            return;
+        }
+
         \wp_enqueue_script( 'inline-edit-post' );
     }
 
@@ -236,7 +240,39 @@ abstract class List_Page_Handler {
      * @return TTbl
      */
     protected function lt(): Data_Table {
-        return $this->ctr->get( $this->table );
+        if ( ! $this->ctr ) {
+            throw new \LogicException(
+                \sprintf(
+                    'List page handler "%s" requires a container to resolve table "%s".',
+                    static::class,
+                    $this->table,
+                ),
+            );
+        }
+
+        $table = $this->ctr->get( $this->table );
+
+        if ( ! $table instanceof Data_Table ) {
+            throw new \UnexpectedValueException(
+                \sprintf(
+                    'Resolved table "%s" for handler "%s" must implement %s.',
+                    $this->table,
+                    static::class,
+                    Data_Table::class,
+                ),
+            );
+        }
+
+        return $table;
+    }
+
+    /**
+     * Determines whether inline edit assets should be loaded for this page.
+     *
+     * Child classes can override this when inline editing is supported.
+     */
+    protected function should_enqueue_inline_edit(): bool {
+        return false;
     }
 
     /**
