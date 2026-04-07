@@ -1,2 +1,19 @@
-old
-vendor
+# Dependencies
+/vendor/
+
+# Legacy code
+/old/
+
+# IDE / Editor
+/.vscode/
+/.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Codex
+/.codex/
+.codex
